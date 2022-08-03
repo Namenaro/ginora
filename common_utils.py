@@ -165,7 +165,7 @@ class IdGen:
         return self.i
 
 def get_cmap(n):
-    colormap_name = 'hsv'
+    colormap_name = 'gist_rainbow'
     return plt.cm.get_cmap(colormap_name, n)
 
 def remove_points_from_list(points_list, points_to_remove):

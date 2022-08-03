@@ -24,22 +24,24 @@ class Cogmap:
     def to_binary_map(self, event_id, map_shape):
         binary_map = np.zeros(map_shape)
         for point, point_events in self.points_to_events.items():
-            for local_event_id, event_data in point_events:
+            for local_event_id, event_data in point_events.items():
                 if event_data.event_id == event_id:
                     binary_map[point.y, point.x] = 1
         return binary_map
 
     def draw(self, back_pic_binary):
         plt.figure()
-        cm = plt.get_cmap('seismic')
+        cm = plt.get_cmap('gray')
         plt.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
         list_uniq_event_ids = list(self.event_ids_set)
-        cmap = get_cmap(len(list_uniq_event_ids))
+        cmap = get_cmap(len(list_uniq_event_ids)+1)
         for point, point_events in self.points_to_events.items():
-            for local_event_id, event_data in point_events:
-                color = cmap(list_uniq_event_ids.index(event_data.event_id))
+            for local_event_id, event_data in point_events.items():
+                color_num = list_uniq_event_ids.index(event_data.event_id)
+                print(color_num)
+                color = cmap(color_num)
                 marker = '$' + str(event_data.event_id) +'$'
-                plt.scatter(point.x, point.y, c=color, marker=marker, alpha=0.4)
+                plt.scatter(point.x, point.y, c=[color], marker=marker, alpha=0.5, s=100)
         plt.show()
 
 

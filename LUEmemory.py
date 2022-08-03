@@ -2,6 +2,8 @@ from common_utils import *
 from seqvence_utils import *
 from cogmap import *
 
+from copy import deepcopy
+
 class SeqRule:
     def __init__(self, dx, dy, max_rad, id_gen):
         self.dx = dx
@@ -24,13 +26,15 @@ class SeqRule:
         found_seqs = []
         points_to_process = get_all_1_points(binary_map)
         while True:
+            if len(points_to_process)<min_len:
+                break
             point = points_to_process[-1]
             seq = try_qrow_seq_of_points_with_u(point, binary_map, Point(self.dx, self.dy), self.max_rad)
             remove_points_from_list(points_to_process, seq)
             if len(seq)>=min_len:
                 found_seqs.append(seq)
-        remove_dubles(seqs_list)
-        self._project_seqs_to_cogmap(seqs_list, cogmap_to_fill)
+        remove_dubles(found_seqs)
+        self._project_seqs_to_cogmap(found_seqs, cogmap_to_fill)
 
     def _project_seqs_to_cogmap(self, seqs_list, cogmap_to_fill):
         for seq in seqs_list:
@@ -96,29 +100,31 @@ class LUEcontainer:
         for rule1_id, rule1 in self.dict_rules1.items():
             rule1.apply_to_binary_map(binary_map, cogmap1)
 
-        cogmap2 = Cogmap()
-        for event_id in cogmap1.event_ids_set:
-            rule2_id = self._get_rule_id_by_event_id(event_id)
-            rule2 = self.dict_rules2[rule2_id]
-            binary_map_for_event = cogmap1.to_binary_map(event_id, binary_map.shape)
-            rule2.apply_to_binary_map(binary_map_for_event, cogmap2)
-        return cogmap2
+        #cogmap2 = Cogmap()
+        for event_id in deepcopy(cogmap1.event_ids_set):
+            rules2_ids = self.dict_events1_to_rules2.get(event_id)
+            if rules2_ids is None:
+                continue
+            for rule2_id in rules2_ids:
+                rule2 = self.dict_rules2[rule2_id]
+                binary_map_for_event = cogmap1.to_binary_map(event_id, binary_map.shape)
+                rule2.apply_to_binary_map(binary_map_for_event, cogmap1)
+        return cogmap1
 
 
 if __name__ == '__main__':
     lue_container = LUEcontainer()
     rule1_id = lue_container.add_rule_1(dx=1, dy=0, max_rad=1)
-    rule2_id = lue_container.add_rule_2(dx=0, dy=1, max_rad=3, event1_id=0)
-    pics, _, _ = get_train_test_contrast_BIN(class_num=45)
-    pic = pics[0]
-    binary_map = binarise_img(pic)
+    rule2_id = lue_container.add_rule_2(dx=0, dy=1, max_rad=4, event1_id=0)
+    pics, _, _ = get_train_test_contrast(class_num=44)
+    binary_map = binarise_img(pics[0])
 
     # test rule 1:
-    print ("test rule 1:")
-    cogmap_to_fill = Cogmap()
-    lue_container.apply_rule_to_binary_map(binary_map, rule1_id, cogmap_to_fill)
-    cogmap_to_fill.draw(binary_map)
+    #print ("test rule 1:")
+    #cogmap_to_fill = Cogmap()
+    #lue_container.apply_rule_to_binary_map(binary_map, rule1_id, cogmap_to_fill)
+    #cogmap_to_fill.draw(binary_map)
 
     # test rule 2:
-    #cogmap =  lue_container.apply_all_to_binary_map(binary_map)
-    #cogmap.draw(binary_map)
+    cogmap =  lue_container.apply_all_to_binary_map(binary_map)
+    cogmap.draw(binary_map)
