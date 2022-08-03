@@ -30,7 +30,7 @@ class Cogmap:
         return binary_map
 
     def draw(self, back_pic_binary):
-        plt.figure()
+        fig = plt.figure()
         cm = plt.get_cmap('gray')
         plt.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
         list_uniq_event_ids = list(self.event_ids_set)
@@ -42,6 +42,6 @@ class Cogmap:
                 color = cmap(color_num)
                 marker = '$' + str(event_data.event_id) +'$'
                 plt.scatter(point.x, point.y, c=[color], marker=marker, alpha=0.5, s=100)
-        plt.show()
+        return fig
 
 

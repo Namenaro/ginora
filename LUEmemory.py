@@ -100,7 +100,7 @@ class LUEcontainer:
         for rule1_id, rule1 in self.dict_rules1.items():
             rule1.apply_to_binary_map(binary_map, cogmap1)
 
-        #cogmap2 = Cogmap()
+        cogmap2 = Cogmap()
         for event_id in deepcopy(cogmap1.event_ids_set):
             rules2_ids = self.dict_events1_to_rules2.get(event_id)
             if rules2_ids is None:
@@ -108,8 +108,8 @@ class LUEcontainer:
             for rule2_id in rules2_ids:
                 rule2 = self.dict_rules2[rule2_id]
                 binary_map_for_event = cogmap1.to_binary_map(event_id, binary_map.shape)
-                rule2.apply_to_binary_map(binary_map_for_event, cogmap1)
-        return cogmap1
+                rule2.apply_to_binary_map(binary_map_for_event, cogmap2)
+        return cogmap2
 
 
 if __name__ == '__main__':
@@ -128,3 +128,4 @@ if __name__ == '__main__':
     # test rule 2:
     cogmap =  lue_container.apply_all_to_binary_map(binary_map)
     cogmap.draw(binary_map)
+    plt.show()
