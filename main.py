@@ -29,7 +29,7 @@ if __name__ == '__main__':
     lue_container =create_LUE_container()
 
     # получение картинок данного типа + контрастных (т.е. других типов вперемешку)
-    train_pics, _, contrast_pics = get_train_test_contrast(class_num=197)
+    train_pics, test_pics, contrast_pics = get_train_test_contrast(class_num=147)
 
     # для каждой трейновой картинки создаем когнитивную
     # карту и заполняем ее точками согласно праввилам из lue_container:
