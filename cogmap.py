@@ -4,9 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class EventData:
-    def __init__(self, mass_of_seq, event_id):
+    def __init__(self, mass_of_seq, event_id, error):
         self.mass_of_seq = mass_of_seq
         self.event_id = event_id
+        self.error = error
 
 class Cogmap:
     def __init__(self):

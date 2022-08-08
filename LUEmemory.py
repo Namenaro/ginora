@@ -41,8 +41,9 @@ class SeqRule:
             mass = len(seq)
             start_point = seq[0]
             end_point = seq[-1]
-            cogmap_to_fill.register_event(start_point, EventData(mass, self.start_event_id))
-            cogmap_to_fill.register_event(end_point, EventData(mass, self.end_event_id))
+            mean_error = get_mean_error(self.dx, self.dy, seq)
+            cogmap_to_fill.register_event(start_point, EventData(mass, self.start_event_id, mean_error))
+            cogmap_to_fill.register_event(end_point, EventData(mass, self.end_event_id, mean_error))
 
 
 
@@ -53,6 +54,10 @@ class LUEcontainer:
         self.dict_events1_to_rules2 = {} # {event1_id : [rule2_id]}
         self.id_gen_rules = IdGen()
         self.id_gen_events = IdGen()
+
+    def get_all_events_ids(self):
+        events_ids = list(range(self.id_gen_events.i+1))
+        return events_ids
 
     def add_rule_1(self, dx, dy, max_rad):
         rule_1 = SeqRule(dx, dy, max_rad, self.id_gen_events)
@@ -95,12 +100,15 @@ class LUEcontainer:
         rule.apply_to_binary_map(binary_map, cogmap_to_fill)
 
 
-    def apply_all_to_binary_map(self, binary_map):
+    def apply_all_to_binary_map(self, binary_map, only_save_events2=True):
         cogmap1 = Cogmap()
         for rule1_id, rule1 in self.dict_rules1.items():
             rule1.apply_to_binary_map(binary_map, cogmap1)
 
         cogmap2 = Cogmap()
+        if only_save_events2 is False:
+            cogmap2=cogmap1 # продолжаем все  отмечать на одной карте
+
         for event_id in deepcopy(cogmap1.event_ids_set):
             rules2_ids = self.dict_events1_to_rules2.get(event_id)
             if rules2_ids is None:

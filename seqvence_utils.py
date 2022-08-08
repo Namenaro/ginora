@@ -65,6 +65,14 @@ def are_dubles(seq1, seq2):
 
 
 
+def get_mean_error(dx, dy, seq):
+    error = 0
+    for i in range(1, len(seq)):
+        real_dx = seq[i].x - seq[i-1].x
+        real_dy = seq[i].y - seq[i-1].y
+        error +=abs(real_dx - dx)
+        error += abs(real_dy - dy)
+    return error/len(seq)
 
 
 
