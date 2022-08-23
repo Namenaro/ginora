@@ -16,6 +16,7 @@ class StructureDescription:
     def __init__(self):
         self.events_data = {} # event_id: event_details
         self.us_data = {}    #  u_id: u_details
+        self.masses_events = {} # mass_id: event_id это для ускорения поиска в геттерах
         self.events_order_during_recognition = [] # упорядоченные event_ids. Первый в списке распознаем первым.
 
     def add_entry(self,  u, start_event_id, end_event_id, LUE_event_id, mass, mass_id, event_id, u_id):
@@ -23,4 +24,15 @@ class StructureDescription:
         self.events_data[event_id]=EventDetails(LUE_event_id, mass, mass_id)
         self.us_data[u_id]=UDetails(u, start_event_id, end_event_id)
         self.events_data[start_event_id].u_id = u_id
+        self.masses_events[mass_id]=event_id
 
+    def get_LUE_id_of_end_of_u(self, u_id):
+        return self.events_data[self.us_data[u_id].end_event_id].LUE_event_id
+
+    def get_LUE_id_and_mass_by_mass_id(self, mass_id):
+        event_id = self.masses_events[mass_id]
+        event_details = self.events_data[event_id]
+        return event_details.LUE_event_id, event_details.mass
+
+    def get_u(self, u_id):
+        return self.us_data[u_id].u
