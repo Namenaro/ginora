@@ -45,4 +45,9 @@ class Cogmap:
                 plt.scatter(point.x, point.y, c=[color], marker=marker, alpha=0.5, s=100)
         return fig
 
+    def find_event_in_cogmap(self, predicted_point_of_this_event, LUE_id, expected_mass):
+        #TODO
+
+    def delete_event(self, id_in_cogmap):
+        #TODO
 

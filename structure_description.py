@@ -1,38 +1,35 @@
 
 class EventDetails:
-    def __init__(self, LUE_event_id, mass, mass_id, u_id=None):
+    def __init__(self, LUE_event_id, mass, incoming_u_id, prev_event_id):
         self.LUE_event_id = LUE_event_id
         self.mass = mass
-        self.mass_id = mass_id
-        self.u_id = u_id # исходящее u или None
+        self.outer_u_ids = []
+        self.incoming_u_id = incoming_u_id
+        self.prev_event_id = prev_event_id
 
-class UDetails:
-    def __init__(self, u, start_event_id, end_event_id):
-        self.u = u
-        self.start_event_id= start_event_id
-        self.end_event_id = end_event_id
 
 class StructureDescription:
     def __init__(self):
-        self.events_data = {} # event_id: event_details
-        self.us_data = {}    #  u_id: u_details
-        self.masses_events = {} # mass_id: event_id это для ускорения поиска в геттерах
-        self.events_order_during_recognition = [] # упорядоченные event_ids. Первый в списке распознаем первым.
+        self.events_data = {} # event_id: EventDetails
+        self.us_data = {}    #  u_id: u
+        self.events_order_during_recognition = [] # Порядок обхода событий. Первый в списке распознаем первым.
 
-    def add_entry(self,  u, start_event_id, end_event_id, LUE_event_id, mass, mass_id, event_id, u_id):
-        self.events_order_during_recognition.append(event_id)
-        self.events_data[event_id]=EventDetails(LUE_event_id, mass, mass_id)
-        self.us_data[u_id]=UDetails(u, start_event_id, end_event_id)
-        self.events_data[start_event_id].u_id = u_id
-        self.masses_events[mass_id]=event_id
+    def get_event_data(self, event_id):
+        event_details = self.events_data[event_id]
+        mass = event_details.mass
+        prev_event_id=event_details.prev_event_id
+        incoming_u = self.us_data[event_details.incoming_u_id]
+        return prev_event_id, incoming_u, mass
 
-    def get_LUE_id_of_end_of_u(self, u_id):
-        return self.events_data[self.us_data[u_id].end_event_id].LUE_event_id
+    def is_first_event(self, event_id):
+        return self.events_order_during_recognition[0] == event_id
 
-    def get_LUE_id_and_mass_by_mass_id(self, mass_id):
-        event_id = self.masses_events[mass_id]
+    def get_event_LUE(self, event_id):
+        return self.events_data[event_id].LUE_event_id
+
+    def get_event_LUE_and_mass(self, event_id):
         event_details = self.events_data[event_id]
         return event_details.LUE_event_id, event_details.mass
 
-    def get_u(self, u_id):
-        return self.us_data[u_id].u
+    def get_incoming_u_id(self,event_id):
+        return self.events_data[event_id].incoming_u_id
