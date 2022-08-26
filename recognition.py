@@ -33,10 +33,12 @@ def find_exemplar_from_point(cogmap, struct, point):
     return exemplar
 
 if __name__ == '__main__':
-    # ШАГ_1
+    pass
+    # ШАГ_0
     # дописать 2 метода в когмап (где ТУДУ)
     # создать вручную описание структуры (вызовы функций exemplar.add_event_from_cogmap (cogmap, event_id_in_cogmap, ids_generator)
     # визуализировать ее экземпляр на эталонной картинке и на других (exemplar.show(back_pick,cogmap,exemplar)
+    # ------------------------------------------
     # взять код Ильи
     # собрать безусловную выюорку и показать ее гистограмму (для структур разной сложности)
 

@@ -1,6 +1,6 @@
 from structure_description import *
 from bank_of_physical_samples import *
-from common_utils import Point
+from common_utils import Point, my_dist
 
 class StructureExemplar:
     def __init__(self, struct_description):
@@ -42,3 +42,19 @@ class StructureExemplar:
 
         return energy
 
+    def find_event_nearest_to_point(self, point):
+        best_id = None
+        best_point = None
+        best_dist =None
+        for event_id , coord in self.events_coords.items():
+            if event_id is None:
+                best_id = event_id
+                best_point = coord
+                best_dist = my_dist(point,coord)
+                continue
+            current_dist= my_dist(point,coord)
+            if current_dist < best_dist:
+                best_id = event_id
+                best_point = coord
+                best_dist = current_dist
+        return best_id ,best_point

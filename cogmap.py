@@ -45,9 +45,33 @@ class Cogmap:
                 plt.scatter(point.x, point.y, c=[color], marker=marker, alpha=0.5, s=100)
         return fig
 
-    def find_event_in_cogmap(self, predicted_point_of_this_event, LUE_id, expected_mass):
-        #TODO
+    def find_event_in_cogmap(self, predicted_point_of_this_event, LUE_id, expected_mass, max_rad=105):
+        # return id_in_cogmap, real_coord, real_mass  или None, None, None
+        # TODO: пока не используется expected_mass
+        if LUE_id not in self.event_ids_set:
+            return None, None, None
+
+        for radius in range(0, max_rad):
+            points = get_coords_for_radius(predicted_point_of_this_event, radius)
+
+            for point in points:
+                if point in self.points_to_events.keys():
+                    for local_event_id, event_data in self.points_to_events[point].items():
+                        if event_data.event_id == LUE_id:
+                            return local_event_id, point, event_data.mass
+
+
 
     def delete_event(self, id_in_cogmap):
-        #TODO
+        for point, events_in_point in self.points_to_events.items():
+            del events_in_point[id_in_cogmap]
+            break
+        if not events_in_point:
+            del self.points_to_events[point]
 
+    def get_event_data(self, event_id_in_cogmap):
+        for point, point_events in self.points_to_events.items():
+            for local_event_id, event_data in point_events.items():
+                if event_id_in_cogmap == local_event_id:
+                    return point, event_data.event_id, event_data.mass
+        return None,None,None
