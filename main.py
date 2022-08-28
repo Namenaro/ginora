@@ -11,6 +11,7 @@ def create_LUE_container():
 
     lue_container.add_rule_1(dx=0, dy=1, max_rad=1) #6 7 вертикальная полосочка
     lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=7)  # 8 9
+
     return lue_container
 
 def create_cogmaps(lue_container, pics):
