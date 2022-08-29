@@ -2,6 +2,8 @@ from structure_description import *
 from bank_of_physical_samples import *
 from common_utils import Point, my_dist
 
+import matplotlib.pyplot as plt
+
 class StructureExemplar:
     def __init__(self, struct_description):
         self.events_coords = {}# event_id:coord
@@ -58,3 +60,13 @@ class StructureExemplar:
                 best_point = coord
                 best_dist = current_dist
         return best_id ,best_point
+
+    def show(self, back_pic_binary):
+        fig = plt.figure()
+        cm = plt.get_cmap('gray')
+        plt.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
+        i=0
+        for event_id, coord in self.events_coords.items():
+            marker = '$' + str(i) +"(" + str(event_id)+")"+ '$'
+            plt.scatter(coord.x, coord.y, c='green', marker=marker, alpha=0.5, s=100)
+        return fig
