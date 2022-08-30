@@ -1,5 +1,5 @@
 from structure_description import *
-from bank_of_physical_samples import *
+from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from common_utils import Point, my_dist
 
 import matplotlib.pyplot as plt
@@ -37,7 +37,7 @@ class StructureExemplar:
 
 
     def get_exemplar_energy(self, bank_physical_histograms):
-        params_probabilities = self._get_probabilities_for_all_relaxable_params( bank_physical_histograms)
+        params_probabilities = self._get_probabilities_for_all_relaxable_params(bank_physical_histograms)
         energy = 0
         for param_id, propbability in params_probabilities.items():
             energy*=propbability

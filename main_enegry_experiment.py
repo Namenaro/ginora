@@ -1,6 +1,7 @@
 from LUEmemory import *
 from common_utils import *
 from grow_structure import GrowStructure
+from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from recognition import *
 from logger import HtmlLogger
 
@@ -23,11 +24,16 @@ def get_all_for_start(class_num=147):
     etalon_pic = train_pics[0]
     train_pics = train_pics[1:]
 
-    return etalon_cogmap,etalon_pic, train_cogmaps, train_pics
+    contrast_cogmaps =[]
+    for binary_map in contrast_cogmaps:
+        cogmap = lue_container.apply_all_to_binary_map(binary_map, only_save_events2=True)
+        contrast_cogmaps.append(cogmap)
+
+    return etalon_cogmap,etalon_pic, train_cogmaps, train_pics, contrast_cogmaps
 
 
 if __name__ == '__main__':
-    etalon_cogmap, etalon_pic, train_cogmaps, train_pics  = get_all_for_start(class_num=147)
+    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_all_for_start(class_num=147)
     fig = etalon_cogmap.draw(etalon_pic)
     plt.show()
 
@@ -45,6 +51,6 @@ if __name__ == '__main__':
     exemplar.show(etalon_pic)
     plt.show()
 
-    #bank_physical_histograms = ...
-    #energy = exemplar.get_exemplar_energy(bank_physical_histograms)
-    #print ("exemplar energy (max for this struct) = " + str(energy))
+    bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps+train_cogmaps)
+    energy = exemplar.get_exemplar_energy(bank_physical_histograms)
+    print ("exemplar energy (max for this struct) = " + str(energy))
