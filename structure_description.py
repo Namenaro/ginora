@@ -20,7 +20,10 @@ class StructureDescription:
         event_details = self.events_data[event_id]
         mass = event_details.mass
         prev_event_id=event_details.prev_event_id
-        incoming_u = self.us_data[event_details.incoming_u_id]
+        if event_details.incoming_u_id is not None:
+            incoming_u = self.us_data[event_details.incoming_u_id]
+        else:
+            incoming_u = None
         return prev_event_id, incoming_u, mass
 
     def is_first_event(self, event_id):

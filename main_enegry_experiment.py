@@ -9,10 +9,9 @@ def get_all_for_start(class_num=147):
     lue_container = LUEcontainer()
     lue_container.add_rule_1(dx=1, dy=0, max_rad=1)  # 0 1 горизонтальная полосочка
     lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 2 3
-    lue_container.add_rule_2(dx=1, dy=1, max_rad=3, event1_id=0)  # 4 5
 
-    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 6 7 вертикальная полосочка
-    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=7)  # 8 9
+    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 4 5 вертикальная полосочка
+    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=7)  # 6 7
 
     train_pics, test_pics, contrast_pics = get_train_test_contrast_BIN(class_num)
     cogmaps = []
@@ -33,7 +32,7 @@ if __name__ == '__main__':
     plt.show()
 
     #создаем структуру:
-    cogmap_events_selected =[0,1]
+    cogmap_events_selected =[2,3]
     struct_creator = GrowStructure(etalon_cogmap)
     struct_creator.add_first_event(cogmap_events_selected[0])
     for i in range(1, len(cogmap_events_selected)):

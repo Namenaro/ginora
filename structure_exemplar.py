@@ -49,7 +49,7 @@ class StructureExemplar:
         best_point = None
         best_dist =None
         for event_id , coord in self.events_coords.items():
-            if event_id is None:
+            if best_id is None:
                 best_id = event_id
                 best_point = coord
                 best_dist = my_dist(point,coord)
@@ -63,10 +63,14 @@ class StructureExemplar:
 
     def show(self, back_pic_binary):
         fig = plt.figure()
+        fig.title="Exemplar : showd id in struct"
         cm = plt.get_cmap('gray')
         plt.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
-        i=0
+
         for event_id, coord in self.events_coords.items():
-            marker = '$' + str(i) +"(" + str(event_id)+")"+ '$'
-            plt.scatter(coord.x, coord.y, c='green', marker=marker, alpha=0.5, s=100)
+            marker = '$' +str(event_id)+ '$'
+            plt.scatter(coord.x, coord.y, c='green', marker=marker, alpha=0.5, s=400)
         return fig
+
+    def get_coord_of_event(self, event_id):
+        return self.events_coords[event_id]
