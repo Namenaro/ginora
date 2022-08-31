@@ -1,5 +1,3 @@
-
-
 from events_stat import *
 from tqdm import tqdm
 
@@ -47,7 +45,7 @@ class BankOfPhysicalSamples:
 
         return keys, probs
 
-    def get_probability_of_mass_of_event(self, etalon_m, dm, event_id):
+    def get_probability_of_mass_of_event(self, etalon_m, dm, event_id, num_bins=None):
         all_masses = []
 
         if event_id not in self.dict_event_to_masses.keys():
@@ -58,39 +56,36 @@ class BankOfPhysicalSamples:
                         if event_data.event_id == event_id:
                             all_masses.append(event_data.mass_of_seq)
 
-            unique_masses = list(set(all_masses))
-            self.num_bins = len(unique_masses)
+            bin_edges = np.histogram(all_masses, bins='doane')
+            probs, edges = np.histogram(all_masses, bins=bin_edges[1],
+                                        weights=np.ones_like(all_masses) / len(all_masses))
 
-            indexes = []
-            for i in range(len(unique_masses)):
-                if etalon_m - dm <= unique_masses[i] <= etalon_m + dm:
-                    indexes.append(i)
-
-            hist_result = np.histogram(all_masses, bins=self.num_bins,
-                                       weights=np.ones_like(all_masses) / len(all_masses))
-            dict_value = (hist_result[0], hist_result[1], all_masses)
-
+            dict_value = (probs, edges, all_masses)
             self.dict_event_to_masses[event_id] = dict_value
-            all_probs = hist_result[0]
-
+            masses = np.arange(etalon_m - dm, etalon_m + dm + 1)
             prob = 0
-            for i in range(indexes[0], indexes[-1] + 1):
-                prob += all_probs[i]
+
+            j = 0
+            for i in range(len(edges) - 1):
+                if edges[i] <= masses[j] <= edges[i + 1]:
+                    while edges[i] <= masses[j] <= edges[i + 1] and j < len(masses) - 1:
+                        j += 1
+
+                    prob += probs[i]
 
         else:
-            hist_result = self.dict_event_to_masses[event_id]
-            all_masses = hist_result[2]
-            unique_masses = list(set(all_masses))
+            probs, edges, all_masses = self.dict_event_to_masses[event_id]
 
-            indexes = []
-            for i in range(len(unique_masses)):
-                if etalon_m - dm <= unique_masses[i] <= etalon_m + dm:
-                    indexes.append(i)
-
-            all_probs = hist_result[0]
+            masses = np.arange(etalon_m - dm, etalon_m + dm + 1)
             prob = 0
-            for i in range(indexes[0], indexes[-1] + 1):
-                prob += all_probs[i]
+
+            j = 0
+            for i in range(len(edges) - 1):
+                if edges[i] <= masses[j] <= edges[i + 1]:
+                    while edges[i] <= masses[j] <= edges[i + 1] and j < len(masses) - 1:
+                        j += 1
+
+                    prob += probs[i]
 
         return prob
 
@@ -126,9 +121,10 @@ class BankOfPhysicalSamples:
 
     def show_hist_m(self, event_id):
         fig, ax = plt.subplots()
+        edges = self.dict_event_to_masses[event_id][1]
         all_masses = self.dict_event_to_masses[event_id][2]
 
-        ax.hist(all_masses, edgecolor="black", bins=self.num_bins,
+        ax.hist(all_masses, edgecolor="black", bins=edges,
                 weights=np.ones_like(all_masses) / len(all_masses))
         plt.show()
 
@@ -176,10 +172,10 @@ def main():
     # карту и заполняем ее точками согласно праввилам из lue_container:
     contrast_cogmaps = create_cogmaps(lue_container_2, contrast_pics)
 
-    bank =BankOfPhysicalSamples(contrast_cogmaps)
+    bank = BankOfPhysicalSamples(contrast_cogmaps)
     event_id = 2
 
-    print(bank.get_probability_of_mass_of_event(5, 2, event_id))
+    print(bank.get_probability_of_mass_of_event(5, 1, event_id))
     print(bank.get_probability_of_du_of_event(Point(11, 4), event_id))
 
     bank.show_hist_m(event_id)

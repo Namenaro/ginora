@@ -62,3 +62,9 @@ class StructureDescription:
             self.us_data[incoming_u_id]=incoming_u
         if prev_event_id is not None:
             self.events_data[prev_event_id].outer_u_ids.append(incoming_u_id)
+
+    def get_LUE_id_of_end_of_u(self, u_id):
+        for event_id, event_details in self.events_data.items():
+            if event_details.incoming_u_id == u_id:
+                return event_details.LUE_event_id
+
