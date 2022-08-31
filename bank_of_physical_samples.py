@@ -1,6 +1,7 @@
 from events_stat import *
 from tqdm import tqdm
 
+
 MAX_RAD = 105
 
 
@@ -91,7 +92,7 @@ class BankOfPhysicalSamples:
 
     def get_probability_of_du_of_event(self, du, event_id):
         all_rads = []
-        my_rad = du.x + du.y
+        my_rad = abs(du.x) + abs(du.y)
         rand_point = self.rand_point()
         if event_id not in self.dict_events_to_dus.keys():
 
