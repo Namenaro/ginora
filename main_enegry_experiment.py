@@ -47,6 +47,8 @@ if __name__ == '__main__':
 
     #простестируем, что она распознавается, если знать правильную точку:
     point , _, _ = etalon_cogmap.get_event_data(cogmap_events_selected[0])
+    point.x+=2
+    point.y+=1
     exemplar = find_exemplar_from_point(etalon_cogmap, structure, point)
     exemplar.show(etalon_pic)
     plt.show()
