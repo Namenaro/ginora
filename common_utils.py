@@ -172,3 +172,14 @@ def remove_points_from_list(points_list, points_to_remove):
     for point in points_to_remove:
         if point in points_list:
             points_list.remove(point)
+
+def get_random_point(max_x=105, max_y=105):
+    point = Point(random.randrange(max_x), random.randrange(max_y))
+    return point
+
+def visualise_sample(sample, n_bins):
+    fig, ax = plt.subplots()
+
+    ax.hist(sample, edgecolor="black", bins=n_bins,
+            weights=np.ones_like(sample) / len(sample))
+    return fig

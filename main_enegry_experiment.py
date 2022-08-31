@@ -4,6 +4,7 @@ from grow_structure import GrowStructure
 from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from recognition import *
 from logger import HtmlLogger
+from energy_sampler import *
 
 
 def get_all_for_start(class_num=147):
@@ -45,7 +46,7 @@ if __name__ == '__main__':
         struct_creator.add_next_event(cogmap_events_selected[i])
     structure = struct_creator.get_structure()
 
-    #простестируем, что она распознавается, если знать правильную точку:
+    #простестируем, что она распознавается, если знать почти верную точку:
     point , _, _ = etalon_cogmap.get_event_data(cogmap_events_selected[0])
     point.x+=2
     point.y+=1
@@ -56,3 +57,8 @@ if __name__ == '__main__':
     bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps+train_cogmaps)
     energy = exemplar.get_exemplar_energy(bank_physical_histograms)
     print ("exemplar energy (max for this struct) = " + str(energy))
+
+    # протестируем, сбор выборки бузусловной
+    energy_sample = unconditional_sample(structure, contrast_cogmaps+train_cogmaps, bank_physical_histograms, sample_size=10)
+    visualise_sample(energy_sample, n_bins=5)
+    plt.show()
