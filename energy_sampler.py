@@ -50,6 +50,7 @@ def visualise_energy_unconditional(struct_size):
                 return
         structure = struct_creator.get_structure()
 
+
         # добавляем в лог ее идеальный экземпляр картинкой
         point, _, _ = etalon_cogmap.get_event_data(cogmap_fisrt_event_id)
         exemplar = find_exemplar_from_point(etalon_cogmap, structure, point)
