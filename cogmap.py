@@ -14,6 +14,7 @@ class Cogmap:
         self.event_ids_set = set()  # типы событий, которые хоть раз регистрировались на этой карте
         self.points_to_events = {}  # {point: {local_event_id: event_data} }
         self.local_id_gen = IdGen()
+        self.num_events_in_cogmap =0
 
     def register_event(self, point, event_data):
         self.event_ids_set.add(event_data.event_id)
@@ -21,6 +22,7 @@ class Cogmap:
             self.points_to_events[point] = {}
         local_event_id = self.local_id_gen.generate_id()
         self.points_to_events[point][local_event_id] = event_data
+        self.num_events_in_cogmap+=1
 
     def to_binary_map(self, event_id, map_shape):
         binary_map = np.zeros(map_shape)
@@ -74,6 +76,7 @@ class Cogmap:
                 break
         if not events_in_point:
             del self.points_to_events[point]
+        self.num_events_in_cogmap-= 1
 
     def get_event_data(self, event_id_in_cogmap):
         for point, point_events in self.points_to_events.items():
@@ -81,3 +84,12 @@ class Cogmap:
                 if event_id_in_cogmap == local_event_id:
                     return point, event_data.event_id, event_data.mass_of_seq
         return None,None,None
+
+    def get_random_event(self):
+        if self.num_events_in_cogmap==0:
+            return None
+
+        point = random.choice(list(self.points_to_events.keys()))
+        event_local_id = random.choice(list(self.points_to_events[point]))
+        return event_local_id
+
