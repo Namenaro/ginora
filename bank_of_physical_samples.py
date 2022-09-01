@@ -22,14 +22,13 @@ class BankOfPhysicalSamples:
 
     @staticmethod
     def get_counts(N, rads):
-        MAX = np.max(rads)
         counter = {}
-        for i in range(0, MAX):
+        for i in range(0, MAX_RAD):
             counter[i] = 0
 
         for i in range(0, N):
             cur_rad = rads[i]
-            for j in range(cur_rad, MAX):
+            for j in range(cur_rad, MAX_RAD):
                 counter[j] += 1
 
         return counter
@@ -113,6 +112,7 @@ class BankOfPhysicalSamples:
             for i in range(len(rads)):
                 if rads[i] == my_rad:
                     prob = probs[i]
+
         else:
             rads, probs = self.dict_events_to_dus[event_id]
             for i in range(len(rads)):

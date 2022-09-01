@@ -1,3 +1,5 @@
+
+
 from LUEmemory import *
 from common_utils import *
 from grow_structure import GrowStructure
@@ -5,7 +7,8 @@ from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from recognition import *
 from logger import HtmlLogger
 from energy_sampler import *
-
+np.random.seed(467)
+random.seed(47)
 
 def get_all_for_start(class_num=147):
     lue_container = LUEcontainer()
@@ -34,6 +37,7 @@ def get_all_for_start(class_num=147):
 
 
 if __name__ == '__main__':
+
     etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_all_for_start(class_num=147)
     fig = etalon_cogmap.draw(etalon_pic)
     plt.show()
@@ -59,6 +63,6 @@ if __name__ == '__main__':
     print ("exemplar energy (max for this struct) = " + str(energy))
 
     # протестируем, сбор выборки бузусловной
-    energy_sample = unconditional_sample(structure, contrast_cogmaps+train_cogmaps, bank_physical_histograms, sample_size=10)
+    energy_sample = unconditional_sample(structure, contrast_cogmaps+train_cogmaps, bank_physical_histograms, sample_size=770)
     visualise_sample(energy_sample, n_bins=5)
     plt.show()

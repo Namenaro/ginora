@@ -38,7 +38,7 @@ class StructureExemplar:
 
     def get_exemplar_energy(self, bank_physical_histograms):
         params_probabilities = self._get_probabilities_for_all_relaxable_params(bank_physical_histograms)
-        energy = 0
+        energy = 1
         for param_id, propbability in params_probabilities.items():
             energy*=propbability
 

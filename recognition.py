@@ -32,6 +32,9 @@ def find_exemplar_from_point(cogmap, struct, point):
 
     return exemplar
 
+def find_best_exemplar_in_cogmap(cogmap, struct):
+    pass
+
 if __name__ == '__main__':
     pass
 

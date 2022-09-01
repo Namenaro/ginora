@@ -64,7 +64,7 @@ class Cogmap:
                     for local_event_id, event_data in self.points_to_events[point].items():
                         if event_data.event_id == LUE_id:
                             return local_event_id, point, event_data.mass_of_seq
-
+        return None, None, None
 
 
     def delete_event(self, id_in_cogmap):

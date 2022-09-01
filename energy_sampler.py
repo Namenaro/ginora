@@ -7,11 +7,14 @@ from recognition import *
 from random import choice
 
 def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size):
-    ENERGY_OF_NON_FOUND = -1
+    ENERGY_OF_NON_FOUND = 1
     energy_sample = []
+
     for i in range(sample_size):
         random_cogmap = choice(cogmaps)
         random_point = get_random_point()
+
+
         exemplar = find_exemplar_from_point(random_cogmap, struct, random_point)
         if exemplar is None:
             energy_sample.append(ENERGY_OF_NON_FOUND)
