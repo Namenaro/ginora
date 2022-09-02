@@ -6,11 +6,11 @@ MAX_RAD = 105
 
 
 class BankOfPhysicalSamples:
-    def __init__(self, cogmaps):
+    def __init__(self, cogmaps, cycles):
         self.cogmaps = cogmaps
         self.dict_events_to_dus = {}
         self.dict_event_to_masses = {}
-
+        self.cycles = cycles
         self.num_bins = None
 
     @staticmethod
@@ -92,32 +92,46 @@ class BankOfPhysicalSamples:
     def get_probability_of_du_of_event(self, du, event_id):
         all_rads = []
         my_rad = abs(du.x) + abs(du.y)
-        rand_point = self.rand_point()
+
         if event_id not in self.dict_events_to_dus.keys():
 
-            for cogmap in self.cogmaps:
-                for point, point_events in cogmap.points_to_events.items():
-                    for local_event_id, event_data in point_events.items():
-                        if event_data.event_id == event_id:
-                            coords = Point(rand_point.x + du.x, rand_point.y + du.y)
-                            _, radius = run_exp(cogmap, coords, event_id)
-                            if radius is not None:
-                                all_rads.append(radius)
-            N = len(all_rads)
-            counter = self.get_counts(N, all_rads)
-            rads, probs = self.get_probs(N, counter)
-            dict_value = (rads, probs)
-            self.dict_events_to_dus[event_id] = dict_value
+            for i in range(self.cycles):
+                random_cogmap = random.choice(self.cogmaps)
+                random_point = self.rand_point()
+                _, radius = run_exp(random_cogmap, random_point, event_id)
 
-            for i in range(len(rads)):
-                if rads[i] == my_rad:
-                    prob = probs[i]
+                if radius is not None:
+                    all_rads.append(radius)
+
+            N = len(all_rads)
+
+            if N == 0:
+                print("On all cogmaps no such event_id were found")
+                dict_value = (-1, -1)
+                self.dict_events_to_dus[event_id] = dict_value
+                prob = 0
+
+            else:
+                counter = self.get_counts(N, all_rads)
+                rads, probs = self.get_probs(N, counter)
+                dict_value = (rads, probs)
+                self.dict_events_to_dus[event_id] = dict_value
+
+                for i in range(len(rads)):
+                    if rads[i] == my_rad:
+                        prob = probs[i]
 
         else:
             rads, probs = self.dict_events_to_dus[event_id]
-            for i in range(len(rads)):
-                if rads[i] == my_rad:
-                    prob = probs[i]
+            if rads == -1 and probs == -1:
+                print("On all cogmaps no such event_id were found")
+                prob = 0
+
+            else:
+                for i in range(len(rads)):
+                    if rads[i] == my_rad:
+                        prob = probs[i]
+
         return prob
 
     def show_hist_m(self, event_id):
@@ -173,7 +187,7 @@ def main():
     # карту и заполняем ее точками согласно праввилам из lue_container:
     contrast_cogmaps = create_cogmaps(lue_container_2, contrast_pics)
 
-    bank = BankOfPhysicalSamples(contrast_cogmaps)
+    bank = BankOfPhysicalSamples(contrast_cogmaps, 200)
     event_id = 2
 
     print(bank.get_probability_of_mass_of_event(5, 1, event_id))

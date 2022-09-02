@@ -10,7 +10,7 @@ def get_all_for_start(class_num=147, contrast_sample_len=40):
     lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 2 3
 
     lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 4 5 вертикальная полосочка
-    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=7)  # 6 7
+    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=4)  # 6 7
 
     train_pics, test_pics, contrast_pics = get_train_test_contrast_BIN(class_num, contrast_sample_len)
     cogmaps = []
