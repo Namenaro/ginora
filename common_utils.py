@@ -181,5 +181,5 @@ def visualise_sample(sample, n_bins):
     fig, ax = plt.subplots()
 
     ax.hist(sample, edgecolor="black", bins=n_bins,
-            weights=np.ones_like(sample) / len(sample), range=[0, 10])
+            weights=np.ones_like(sample) / len(sample), range=[-1, 10])
     return fig

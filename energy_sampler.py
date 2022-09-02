@@ -16,7 +16,7 @@ np.random.seed(467)
 random.seed(47)
 
 def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size):
-    ENERGY_OF_NON_FOUND = 1
+    ENERGY_OF_NON_FOUND = -1
     energy_sample = []
 
     for i in range(sample_size):
@@ -65,7 +65,7 @@ def visualise_energy_unconditional(struct_size):
         bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps + train_cogmaps, cycles=200)
         energy_sample = unconditional_sample(structure, contrast_cogmaps + train_cogmaps, bank_physical_histograms,
                                              sample_size=size_of_sample)
-        fig = visualise_sample(energy_sample, n_bins=7)
+        fig = visualise_sample(energy_sample, n_bins=11)
         logger.add_fig(fig)
         logger.add_text("---------------------------Next structure:----------------------------")
     logger.close()
