@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 class EventData:
     def __init__(self, mass_of_seq, event_id, error):
         self.mass_of_seq = mass_of_seq
-        self.event_id = event_id
+        self.event_id = event_id #LUE
         self.error = error
 
 class Cogmap:
     def __init__(self):
-        self.event_ids_set = set()  # типы событий, которые хоть раз регистрировались на этой карте
+        self.event_ids_set = set()  # типы LUE-событий, которые хоть раз регистрировались на этой карте
         self.points_to_events = {}  # {point: {local_event_id: event_data} }
         self.local_id_gen = IdGen()
         self.num_events_in_cogmap =0
@@ -92,4 +92,14 @@ class Cogmap:
         point = random.choice(list(self.points_to_events.keys()))
         event_local_id = random.choice(list(self.points_to_events[point]))
         return event_local_id
+
+    def get_all_points_for_LUE(self, LUE_id):
+        points = []
+        if LUE_id not in self.event_ids_set:
+            return []
+        for point, point_events in self.points_to_events.items():
+            for local_event_id, event_data in point_events.items():
+                if event_data.event_id == LUE_id:
+                    points.append(point)
+        return points
 

@@ -1,5 +1,6 @@
 from ids_generator import StructIdsGenerator
 
+
 class EventDetails:
     def __init__(self, LUE_event_id, mass, incoming_u_id, prev_event_id):
         self.LUE_event_id = LUE_event_id
@@ -28,6 +29,11 @@ class StructureDescription:
 
     def is_first_event(self, event_id):
         return self.events_order_during_recognition[0] == event_id
+
+    def get_first_event_LUE(self):
+        first_event_id = self.events_order_during_recognition[0]
+        LUE_id = self.events_data[first_event_id].LUE_event_id
+        return LUE_id
 
     def get_event_LUE(self, event_id):
         return self.events_data[event_id].LUE_event_id
@@ -67,4 +73,6 @@ class StructureDescription:
         for event_id, event_details in self.events_data.items():
             if event_details.incoming_u_id == u_id:
                 return event_details.LUE_event_id
+
+
 

@@ -8,7 +8,7 @@ from recognition import *
 from logger import HtmlLogger
 from dataset_getter import get_all_for_start
 from cogmap import *
-from grow_structure import GrowStructure
+from grow_structure import *
 
 from random import choice
 
@@ -32,12 +32,12 @@ def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size)
             energy_sample.append(energy)
     return energy_sample
 
-def visualise_energy_unconditional(struct_size):
+def visualise_energy_unconditional(struct_size, class_num=147):
     # визуально отвечаем на вопрос, правда ли, что чем сложнее структура, тем реже низкие значения ее энергий в безусловной выбоорке?
     logger = HtmlLogger("energy_"+str(struct_size))
     num_of_test_structs = 5
     size_of_sample = 300
-    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_all_for_start(class_num=147)
+    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_all_for_start(class_num)
 
     for j in range(num_of_test_structs):
 
@@ -71,9 +71,10 @@ def visualise_energy_unconditional(struct_size):
     logger.close()
 
 if __name__ == '__main__':
-    visualise_energy_unconditional(1)
-    visualise_energy_unconditional(2)
-    visualise_energy_unconditional(3)
-    visualise_energy_unconditional(4)
-    visualise_energy_unconditional(5)
+    class_num = 144
+    visualise_energy_unconditional(1, class_num)
+    visualise_energy_unconditional(2, class_num)
+    visualise_energy_unconditional(3, class_num)
+    visualise_energy_unconditional(4, class_num)
+    visualise_energy_unconditional(5, class_num)
 

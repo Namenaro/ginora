@@ -7,6 +7,11 @@ class HtmlLogger:
         self.name = name
         self.html = ''
 
+    def add_line_little(self):
+        self.html+="<hr>"
+
+    def add_line_big(self):
+        self.html += "<hr style=\"border_width:15;\">"
     def add_text(self, text):
         self.html += text + '<br>'
 

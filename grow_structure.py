@@ -1,5 +1,6 @@
 from cogmap import *
 from structure_exemplar import *
+from structure_description import StructureDescription
 from ids_generator import StructIdsGenerator
 from LUEmemory import *
 
@@ -41,6 +42,20 @@ class GrowStructure:
         self.current_exemplar.set_event_data(event_id, real_coord, mass, incoming_u_error=Point(0,0))
         # удаляем событие из когмап как рассмотренное
         self.cogmap.delete_event(cogmap_event_id)
+
+def create_random_structure(etalon_cogmap, struct_size):
+    struct_creator = GrowStructure(etalon_cogmap)
+    cogmap_fisrt_event_id = struct_creator.get_actual_cogmap().get_random_event()
+    struct_creator.add_first_event(cogmap_fisrt_event_id)
+    for i in range(1, struct_size):
+        cogmap_event_id = struct_creator.get_actual_cogmap().get_random_event()
+        struct_creator.add_next_event(cogmap_event_id)
+        if cogmap_event_id is None:
+            print("TOO LARGE STRUCT for this etalon cogmap")
+            return
+    structure = struct_creator.get_structure()
+    ideal_exemplar = struct_creator.current_exemplar
+    return structure, ideal_exemplar
 
 if __name__ == '__main__':
     pass
