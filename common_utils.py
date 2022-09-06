@@ -177,9 +177,9 @@ def get_random_point(max_x=105, max_y=105):
     point = Point(random.randrange(max_x), random.randrange(max_y))
     return point
 
-def visualise_sample(sample, n_bins):
+def visualise_sample(sample, range, n_bins):
     fig, ax = plt.subplots()
 
     ax.hist(sample, edgecolor="black", bins=n_bins,
-            weights=np.ones_like(sample) / len(sample), range=[-1, 10])
+            weights=np.ones_like(sample) / len(sample), range=range)
     return fig

@@ -83,7 +83,7 @@ def visualise_struct_recogmition_on_several_cogmaps(struct, cogmaps, pics, bank_
 if __name__ == '__main__':
     struct_size = 3
     logger = HtmlLogger("recogn_" + str(struct_size))
-    num_of_test_structs = 2
+    num_of_test_structs = 1
 
     etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_all_for_start(class_num=147)
     bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps + train_cogmaps, cycles=200)
