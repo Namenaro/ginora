@@ -9,11 +9,14 @@ from copy import deepcopy
 
 
 class GrowStructure:
-    def __init__(self, cogmap):
+    def __init__(self, cogmap, ids_generator=None):
         self.cogmap = deepcopy(cogmap)
         self.current_exemplar = None
         self.current_structure = None
-        self.ids_generator = StructIdsGenerator()
+        if ids_generator is None:
+            self.ids_generator = StructIdsGenerator()
+        else:
+            self.ids_generator = ids_generator
 
     def get_actual_cogmap(self):
         return self.cogmap
@@ -43,8 +46,8 @@ class GrowStructure:
         # удаляем событие из когмап как рассмотренное
         self.cogmap.delete_event(cogmap_event_id)
 
-def create_random_structure(etalon_cogmap, struct_size):
-    struct_creator = GrowStructure(etalon_cogmap)
+def create_random_structure(etalon_cogmap, struct_size, ids_generator=None):
+    struct_creator = GrowStructure(etalon_cogmap, ids_generator)
     cogmap_fisrt_event_id = struct_creator.get_actual_cogmap().get_random_event()
     struct_creator.add_first_event(cogmap_fisrt_event_id)
     for i in range(1, struct_size):
@@ -56,6 +59,16 @@ def create_random_structure(etalon_cogmap, struct_size):
     structure = struct_creator.get_structure()
     ideal_exemplar = struct_creator.current_exemplar
     return structure, ideal_exemplar
+
+
+def create_by_list_of_events(cogmap, events_list, ids_generator=None):
+    struct_creator = GrowStructure(cogmap, ids_generator)
+    struct_creator.add_first_event(events_list[0])
+    for i in range(1, len(events_list)):
+        struct_creator.add_next_event(events_list[i])
+    exemplar = struct_creator.current_exemplar
+    structure = struct_creator.get_structure()
+    return exemplar, structure
 
 if __name__ == '__main__':
     pass

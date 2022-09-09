@@ -18,6 +18,13 @@ class StructureExemplar:
         incoming_u_id = self.struct_rescription.get_incoming_u_id(event_id)
         self.dus[incoming_u_id]=incoming_u_error
 
+    def get_mass_of_event(self, event_id):
+        return self.events_masses[event_id]
+
+    def get_LUE_of_event(self, event_id):
+        lue_id, _ = self.struct_rescription.get_event_LUE_and_mass(event_id)
+        return lue_id
+
     def _get_probabilities_for_all_relaxable_params(self, bank_physical_histograms):
         result = {}  # param_id : probability
         # заполняем данные по массам
@@ -25,7 +32,7 @@ class StructureExemplar:
             LUE_event_id, etalon_mass = self.struct_rescription.get_event_LUE_and_mass(event_id)
             dm = abs(real_mass-etalon_mass)
             probability = bank_physical_histograms.get_probability_of_mass_of_event(etalon_mass, dm, LUE_event_id)
-            result[event_id] = probability
+            #result[event_id] = probability
 
         # заполняем данные по смещениям
         for u_id, du in self.dus.items():

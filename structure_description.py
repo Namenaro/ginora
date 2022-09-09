@@ -13,7 +13,7 @@ class EventDetails:
 class StructureDescription:
     def __init__(self, ids_gen):
         self.ids_gen = ids_gen
-        self.events_data = {} # event_id: EventDetails
+        self.events_data = {}  # event_id: EventDetails
         self.us_data = {}    #  u_id: u
         self.events_order_during_recognition = [] # Порядок обхода событий. Первый в списке распознаем первым.
 
