@@ -133,6 +133,9 @@ def my_dist(point1, point2):
     dy = abs(point1.y - point2.y)
     return dx+dy
 
+def my_norm(point):
+    return abs(point.x) + abs(point.y)
+
 
 def get_mean_u(points_list):
     n = len(points_list)

@@ -30,6 +30,8 @@ class StructureDescription:
     def is_first_event(self, event_id):
         return self.events_order_during_recognition[0] == event_id
 
+    def get_prev_event(self, event_id):
+        return self.events_data[event_id].prev_event_id
     def get_first_event_LUE(self):
         first_event_id = self.events_order_during_recognition[0]
         LUE_id = self.events_data[first_event_id].LUE_event_id
@@ -45,6 +47,9 @@ class StructureDescription:
     def get_incoming_u_id(self,event_id):
         return self.events_data[event_id].incoming_u_id
 
+    def get_incoming_u(self, event_id):
+        return self.us_data[self.events_data[event_id].incoming_u_id]
+
     def add_first_event(self, event_LUE, mass, incoming_u):
         if incoming_u is None:
             incoming_u_id = None
@@ -55,9 +60,10 @@ class StructureDescription:
         self._add_event(event_id, event_LUE, mass, incoming_u, incoming_u_id, prev_event_id)
         return incoming_u_id, event_id
 
-    def add_next_event(self, event_LUE, mass, incoming_u, prev_event_id):
+    def add_next_event(self, event_LUE, mass, incoming_u, prev_event_id, event_id=None):
         incoming_u_id = self.ids_gen.get_id_for_u()
-        event_id = self.ids_gen.get_id_for_event()
+        if event_id is None:
+            event_id = self.ids_gen.get_id_for_event()
         self._add_event(event_id, event_LUE, mass, incoming_u, incoming_u_id, prev_event_id)
         return incoming_u_id, event_id
 
@@ -73,6 +79,31 @@ class StructureDescription:
         for event_id, event_details in self.events_data.items():
             if event_details.incoming_u_id == u_id:
                 return event_details.LUE_event_id
+
+    def reset_input_to_event(self, event_id, new_input_u, new_prev_event):
+        old_u_id = self.get_incoming_u_id(event_id)
+        if old_u_id is not None:
+            del self.us_data[old_u_id]
+
+        new_u_id = self.ids_gen.get_id_for_u()
+        self.us_data[new_u_id] = new_input_u
+
+        self.events_data[event_id].prev_event_id = new_prev_event
+        self.events_data[event_id].incoming_u_id = new_u_id
+
+        for event_id, event_details in self.events_data.items():
+            if old_u_id in event_details.outer_u_ids:
+                event_details.outer_u_ids.remove(old_u_id)
+
+            actual_prev_event = self.get_prev_event(event_id)
+            if actual_prev_event in self.events_data.keys():
+                self.events_data[actual_prev_event].outer_u_ids.append(new_u_id)
+
+
+
+
+
+
 
 
 
