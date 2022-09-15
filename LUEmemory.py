@@ -14,8 +14,8 @@ class SeqRule:
 
     def __str__(self):
         return "dx=" + str(self.dx) + ", dy=" + str(self.dy) + ", max_rad="\
-               + str(self.max_rad) + ", start_event_id=" + str(self.start_event_id)\
-               + ", end_event_id="+ str(self.end_event_id)
+               + str(self.max_rad) + "," + str(self.start_event_id)\
+               + "-------->"+ str(self.end_event_id)
 
     def apply_to_binary_map(self, binary_map, cogmap_to_fill):
         # собираем все единицы в список и из каждой пытаемся
@@ -55,6 +55,11 @@ class LUEcontainer:
         self.id_gen_rules = IdGen()
         self.id_gen_events = IdGen()
 
+    def print(self):
+        res = ""
+        for rule_id, seq_rule in self.dict_rules2.items():
+            res+=str(seq_rule) + "<br>"
+        return res
     def get_all_events_ids(self):
         events_ids = list(range(self.id_gen_events.i+1))
         return events_ids

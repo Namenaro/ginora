@@ -1,4 +1,5 @@
 from structure_description import *
+import matplotlib.patches as mpatches
 from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from common_utils import Point, my_dist
 
@@ -69,14 +70,26 @@ class StructureExemplar:
         return best_id ,best_point
 
     def show(self, back_pic_binary):
-        fig = plt.figure()
+        fig, ax= plt.subplots()
         fig.title="Exemplar : showd id in struct"
         cm = plt.get_cmap('gray')
-        plt.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
+        ax.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
 
         for event_id, coord in self.events_coords.items():
-            marker = '$' +str(event_id)+ '$'
-            plt.scatter(coord.x, coord.y, c='green', marker=marker, alpha=0.5, s=400)
+            marker = '$' + str(event_id) + '$'
+            annotation = "(mass=" + str(self.get_mass_of_event(event_id))+ ", LUE="+str(self.get_LUE_of_event(event_id))+")"
+            ax.scatter(coord.x, coord.y, c='green', marker=marker, alpha=0.8, s=200)
+            ax.annotate(annotation, (coord.x, coord.y), color='blue', xytext=(20,15), textcoords='offset points',
+                         ha='center', va='bottom', bbox=dict(boxstyle='round,pad=0.2', fc='yellow', alpha=0.6),
+                         arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.95',  color='b'))
+
+            prev_event_id = self.struct_rescription.get_prev_event(event_id)
+            if prev_event_id is not None:
+                prev_event_coord = self.get_coord_of_event(prev_event_id)
+                arrow = mpatches.FancyArrowPatch((prev_event_coord.x, prev_event_coord.y), (coord.x, coord.y),
+                                                 mutation_scale=10)
+                ax.add_patch(arrow)
+
         return fig
 
     def get_coord_of_event(self, event_id):

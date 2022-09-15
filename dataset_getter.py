@@ -27,4 +27,4 @@ def get_all_for_start(class_num=147, contrast_sample_len=40):
         cogmap = lue_container.apply_all_to_binary_map(binary_map, only_save_events2=True)
         contrast_cogmaps.append(cogmap)
 
-    return etalon_cogmap,etalon_pic, train_cogmaps, train_pics, contrast_cogmaps
+    return etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps

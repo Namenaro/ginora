@@ -136,26 +136,32 @@ class BankOfPhysicalSamples:
 
     def show_hist_m(self, event_id):
         fig, ax = plt.subplots()
+        plt.suptitle("Вероятности значений массы для событий типа" + str(event_id))
         edges = self.dict_event_to_masses[event_id][1]
         all_masses = self.dict_event_to_masses[event_id][2]
 
         ax.hist(all_masses, edgecolor="black", bins=edges,
                 weights=np.ones_like(all_masses) / len(all_masses))
-        plt.show()
+        plt.xlabel("масса event_id")
+        plt.ylabel("p (масса event_id)")
+        plt.ylim([0, 1])
+        return fig
 
     def show_hist_du(self, event_id):
-
         keys, probs = self.dict_events_to_dus[event_id]
         pos = np.arange(len(keys))
         width = 1.0  # gives histogram aspect to the bar diagram
 
-        ax = plt.axes()
-        ax.set_xticks(pos + (width / 2))
-        ax.set_xticklabels(keys)
+        fig, ax = plt.subplots()
+        plt.suptitle("Вероятности для разных радиусов, что в окрестности окажется >= 1 событий типа " + str(event_id))
+        #ax.set_xticks(pos + (width / 2))
+        #ax.set_xticklabels(keys)
 
         plt.bar(pos, probs, width, edgecolor="black")
-        plt.show()
-
+        plt.xlabel("du")
+        plt.ylabel("p (event_id exists in O(du) )")
+        plt.ylim([0,1])
+        return fig
 
 def create_LUE_container():
     lue_container = LUEcontainer()
@@ -181,7 +187,7 @@ def main():
     lue_container_2 = create_LUE_container()
 
     # получение картинок данного типа + контрастных (т.е. других типов вперемешку)
-    _, _, contrast_pics = get_train_test_contrast(class_num=8)
+    _, _, contrast_pics = get_train_test_contrast(class_num=8, contrast_sample_len=20)
 
     # для каждой трейновой картинки создаем когнитивную
     # карту и заполняем ее точками согласно праввилам из lue_container:
@@ -194,8 +200,9 @@ def main():
     print(bank.get_probability_of_du_of_event(Point(11, 4), event_id))
 
     bank.show_hist_m(event_id)
+    plt.show()
     bank.show_hist_du(event_id)
-
+    plt.show()
 
 if __name__ == '__main__':
     main()

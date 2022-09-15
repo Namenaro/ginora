@@ -103,3 +103,12 @@ class Cogmap:
                     points.append(point)
         return points
 
+    def print(self):
+        description = ""
+        for point, point_events in self.points_to_events.items():
+            for local_event_id, event_data in point_events.items():
+                event_descript = "id в ког.мапе: "+ str(local_event_id) +" [LUE_id="+ str(event_data.event_id) +" , mass=" + str(event_data.mass_of_seq)  +"] "+str(point)+ "<br>"
+                description +=event_descript
+        return description
+
+
