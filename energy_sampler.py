@@ -9,6 +9,7 @@ from logger import HtmlLogger
 from dataset_getter import get_all_for_start
 from cogmap import *
 from grow_structure import *
+from main_constants import *
 
 
 from conditional_recogniser import ConditionalRecogniser
@@ -18,7 +19,7 @@ from random import choice
 np.random.seed(467)
 random.seed(47)
 
-def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size, ENERGY_OF_NON_FOUND = -1):
+def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size):
 
     energy_sample = []
 
@@ -36,7 +37,7 @@ def unconditional_sample(struct, cogmaps, bank_physical_histograms, sample_size,
     return energy_sample
 
 
-def conditional_sample(conditional_struct, predictor_struct,  cogmaps, bank_physical_histograms, ENERGY_OF_NON_FOUND):
+def conditional_sample(conditional_struct, predictor_struct,  cogmaps, bank_physical_histograms):
     energy_sample_predictor = []
     energy_sample_prediction = []
     for cogmap in cogmaps:
@@ -73,7 +74,7 @@ if __name__ == '__main__':
 
     cond_rec = ConditionalRecogniser(exemplar_predictor, exemplar_prediction)
 
-    energy_sample_predictor, energy_sample_prediction = conditional_sample(cond_rec, predictor_struct, train_cogmaps+contrast_cogmaps, bank_physical_histograms, ENERGY_OF_NON_FOUND = -1)
+    energy_sample_predictor, energy_sample_prediction = conditional_sample(cond_rec, predictor_struct, train_cogmaps+contrast_cogmaps, bank_physical_histograms)
 
     fig, ax1 = plt.subplots()
     ax1.set_ylabel("Counts")

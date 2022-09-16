@@ -5,6 +5,7 @@ from structure_exemplar import *
 from dataset_getter import get_all_for_start
 from logger import HtmlLogger
 from grow_structure import *
+from main_constants import *
 
 from copy import deepcopy
 
@@ -37,6 +38,8 @@ def find_exemplar_from_point(cogmap, struct, point):
 
 def find_best_exemplar_in_cogmap(cogmap, struct, bank_of_physical_samples):
     exemplars = get_all_exemplars_of_struct_in_cogmap(cogmap, struct)
+    if len(exemplars)==0:
+        return None, ENERGY_OF_NON_FOUND
     best_exemplar= exemplars[0]
     best_energy = best_exemplar.get_exemplar_energy(bank_of_physical_samples)
     for i in range(1, len(exemplars)):

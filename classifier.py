@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 
 class Merged:
     def __init__(self, exemplar_predictor, exemplar_prediction, bank_of_physical_samples):
+        self.predictor_struct = exemplar_predictor.struct_rescription
         self.bank_of_physical_samples = bank_of_physical_samples
         self.merged_struct = deepcopy(exemplar_predictor.struct_rescription)
         merged_exemplar = deepcopy(exemplar_predictor)
@@ -29,6 +30,42 @@ class Merged:
     def apply(self, cogmap):
         best_exemplar, best_energy = find_best_exemplar_in_cogmap(cogmap, self.merged_struct, self.bank_of_physical_samples)
         return best_exemplar, best_energy
+
+    def show_on_cogmap(self, cogmap, back_pic_binary, ax):
+        exemplar, energy = find_best_exemplar_in_cogmap(cogmap, self.merged_struct, self.bank_of_physical_samples)
+        ax.title.set_text( "Merged energy: "+ str(energy))
+        cm = plt.get_cmap('gray')
+        ax.imshow(back_pic_binary, cmap=cm, vmin=0, vmax=1)
+        if exemplar is None:
+            return
+        for event_id, coord in exemplar.events_coords.items():
+            marker = '$' + str(event_id) + '$'
+            annotation = "(mass=" + str(exemplar.get_mass_of_event(event_id)) + ", LUE=" + str(
+                exemplar.get_LUE_of_event(event_id)) + ")"
+            color = 'green'
+            if event_id in self.predictor_struct.events_order_during_recognition:
+                color = 'red'
+            ax.scatter(coord.x, coord.y, c=color, marker=marker, alpha=0.8, s=200)
+            ax.annotate(annotation, (coord.x, coord.y), color='blue', xytext=(20, 15), textcoords='offset points',
+                        ha='center', va='bottom', bbox=dict(boxstyle='round,pad=0.2', fc=color, alpha=0.6),
+                        arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.95', color='b'))
+
+            prev_event_id = exemplar.struct_rescription.get_prev_event(event_id)
+            if prev_event_id is not None:
+                prev_event_coord = exemplar.get_coord_of_event(prev_event_id)
+                arrow = mpatches.FancyArrowPatch((prev_event_coord.x, prev_event_coord.y), (coord.x, coord.y),
+                                                 mutation_scale=10)
+                ax.add_patch(arrow)
+
+
+    def show_on_cogmaps(self, cogmaps, pics):
+        fig, axs = plt.subplots(1, len(pics), figsize=(8*len(pics),8), dpi=60)
+        for i in range(len(pics)):
+            back_pic_binary = pics[i]
+            cogmap = cogmaps[i]
+            ax = axs[i]
+            self.show_on_cogmap(cogmap, back_pic_binary, ax)
+        return fig
 
     def visualise(self, cogmaps_true, cogmaps_contrast):
         energies_true = []
@@ -46,7 +83,7 @@ class Merged:
 
         ax1.hist([energies_true, energies_contrast], color = ['g', 'r'], label=['true class', 'contast'])
         ax1.legend()
-        return fig
+        return fig, energies_true, energies_contrast
 
 
 

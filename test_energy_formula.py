@@ -10,13 +10,14 @@ from dataset_getter import get_all_for_start
 from cogmap import *
 from grow_structure import *
 from energy_sampler import unconditional_sample
+from main_constants import *
 
 from random import choice
 
 np.random.seed(467)
 random.seed(47)
 
-def visualise_formula(struct_size=3, class_num=147, energy_range=[-1,10], n_bins=11, ENERGY_OF_NON_FOUND=-1):
+def visualise_formula(struct_size=3, class_num=147, energy_range=[-1,10], n_bins=11):
     logger = HtmlLogger("formula_energy_"+str(struct_size))
     num_of_test_structs = 1
     n_cogmaps = 5
@@ -51,7 +52,7 @@ def visualise_formula(struct_size=3, class_num=147, energy_range=[-1,10], n_bins
         # собираем по ней безусловную выборку и ее гисту в лог
         logger.add_text("unconditional sample (histogram) of this structure:")
         energy_sample = unconditional_sample(structure, contrast_cogmaps + train_cogmaps, bank_physical_histograms,
-                                             sample_size=200, ENERGY_OF_NON_FOUND=ENERGY_OF_NON_FOUND)
+                                             sample_size=200)
         fig = visualise_sample(energy_sample, energy_range, n_bins)
         logger.add_fig(fig)
         logger.add_text("struct finding on conctere cogmaps:")
@@ -66,7 +67,6 @@ if __name__ == '__main__':
     class_num = 147
     energy_range = [-1, 10]
     n_bins = 11
-    ENERGY_OF_NON_FOUND = -1
-    visualise_formula(1, class_num, energy_range, n_bins, ENERGY_OF_NON_FOUND)
-    visualise_formula(2, class_num, energy_range, n_bins, ENERGY_OF_NON_FOUND)
-    visualise_formula(3, class_num, energy_range, n_bins, ENERGY_OF_NON_FOUND)
+    visualise_formula(1, class_num, energy_range, n_bins)
+    visualise_formula(2, class_num, energy_range, n_bins)
+    visualise_formula(3, class_num, energy_range, n_bins)

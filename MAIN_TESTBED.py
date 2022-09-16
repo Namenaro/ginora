@@ -7,6 +7,9 @@ from logger import HtmlLogger
 from structure_exemplar import *
 from energy_sampler import *
 from dataset_getter import get_all_for_start
+from stata import get_p_value_for_two_samples
+from classifier import Merged
+from main_constants import *
 
 np.random.seed(467)
 random.seed(47)
@@ -39,8 +42,8 @@ def get_cogmaps_from_rules(lue_container, class_num, contrast_sample_len):
     return etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps
 
 
-def create_exemplar_and_struct_by_events_list(cogmap, events_list):
-    struct_creator = GrowStructure(cogmap)
+def create_exemplar_and_struct_by_events_list(cogmap, events_list, ids_gen):
+    struct_creator = GrowStructure(cogmap, ids_gen)
     struct_creator.add_first_event(events_list[0])
     for i in range(1, len(events_list)):
         struct_creator.add_next_event(events_list[i])
@@ -58,6 +61,15 @@ def show_LUE_events_stat(LUE_events_list, bank_hists, logger):
         logger.add_fig(bank_hists.show_hist_du(e_id))
         logger.add_line_little()
 
+def two_hists(sample1, sample2, label1, label2):
+    fig, ax1 = plt.subplots()
+    ax1.set_ylabel("Counts")
+    ax1.set_xlabel("Energy")
+
+    ax1.hist([sample1, sample2], color=['g', 'r'], label=[label1, label2])
+    ax1.legend()
+    return fig
+
 if __name__ == '__main__':
     logger = HtmlLogger("MAIN_TEST")
 
@@ -66,7 +78,7 @@ if __name__ == '__main__':
     lue_rules = create_LUE_rules()
     logger.add_text("LUE-правила связывают пары событий:")
     logger.add_text(lue_rules.print())
-    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_cogmaps_from_rules(lue_rules, class_num=147, contrast_sample_len=20)
+    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_cogmaps_from_rules(lue_rules, class_num=147, contrast_sample_len=40)
     logger.add_text("Эталонная когнитивная карта:")
     logger.add_text(etalon_cogmap.print())
     logger.add_fig(etalon_cogmap.draw(etalon_pic))
@@ -85,20 +97,69 @@ if __name__ == '__main__':
     logger.add_text(" События предсказания: " + str(prediction_events))
 
     # 3.Создаем стуктуру/экземпляр для предиктора и предсказуемого:
-    exemplar_predictor, structure_predictor = create_exemplar_and_struct_by_events_list(etalon_cogmap, predictor_events)
-    exemplar_prediction, structure_prediction = create_exemplar_and_struct_by_events_list(etalon_cogmap, prediction_events)
+    ids_gen = StructIdsGenerator()
+    exemplar_predictor, structure_predictor = create_exemplar_and_struct_by_events_list(etalon_cogmap, predictor_events, ids_gen)
+    exemplar_prediction, structure_prediction = create_exemplar_and_struct_by_events_list(etalon_cogmap, prediction_events, ids_gen)
     logger.add_text("Эталонный экземпляр предиктора:")
     logger.add_fig(exemplar_predictor.show(etalon_pic))
     logger.add_text("Эталонный экземпляр предсказания:")
     logger.add_fig(exemplar_prediction.show(etalon_pic))
 
-    # 4. Максимальная энергия того и того:
+    # 4. Идеальная энергия того и того:
     IDEAL_ENERGY_PREDICTOR = exemplar_predictor.get_exemplar_energy(bank_physical_histograms)
     logger.add_text("Энергия идеального экземпляра предиктора = " + str(IDEAL_ENERGY_PREDICTOR))
     IDEAL_ENERGY_PREDICTION = exemplar_prediction.get_exemplar_energy(bank_physical_histograms)
     logger.add_text("Энергия идеального экземпляра предискауемого = " + str(IDEAL_ENERGY_PREDICTION))
     logger.add_line_big()
 
+    # 5. Безусловная выборка предсказуемого
+
+    unconditional_prediction_sample = unconditional_sample(structure_prediction, contrast_cogmaps + train_cogmaps, bank_physical_histograms,
+                                         sample_size=200)
+    fig = visualise_sample(unconditional_prediction_sample, range=[ENERGY_OF_NON_FOUND, IDEAL_ENERGY_PREDICTION], n_bins=7)
+    logger.add_text("Безусловная выборка предсказуемого на train + contrast:")
+    logger.add_text(str(unconditional_prediction_sample))
+    logger.add_fig(fig)
+    logger.add_line_little()
+
+    # 6. Условная выборка предсказуемого
+    cond_rec = ConditionalRecogniser(exemplar_predictor, exemplar_prediction)
+    energy_sample_predictor, conditional_prediction_sample = conditional_sample(cond_rec, structure_predictor,
+                                                                           train_cogmaps,
+                                                                           bank_physical_histograms)
+    logger.add_text("Условная выборка предсказуемого TRAIN:")
+    logger.add_text(str(conditional_prediction_sample))
+    fig = visualise_sample(conditional_prediction_sample, range=[ENERGY_OF_NON_FOUND, IDEAL_ENERGY_PREDICTION],
+                           n_bins=7)
+    logger.add_fig(fig)
+    logger.add_line_little()
+
+    # 6. Сравнение условной и безусловной выборок предсказуемого:
+    p_value = get_p_value_for_two_samples(unconditional_prediction_sample, conditional_prediction_sample)
+    logger.add_text("Сравнение условной и безусловной выборок предсказуемого:")
+    logger.add_text("p_value = "+ str(p_value))
+    fig = two_hists(unconditional_prediction_sample, conditional_prediction_sample, "unconditional", "conditional")
+    logger.add_fig(fig)
+    logger.add_line_little()
+
+    # 7. Итоговый классификатор:
+    merged = Merged(exemplar_predictor, exemplar_prediction, bank_physical_histograms)
+
+    logger.add_text("Итоговый классификатор:")
+    fig, ax = plt.subplots()
+    merged.show_on_cogmap(etalon_cogmap, etalon_pic, ax)
+    logger.add_fig(fig)
+
+
+
+    fig, energies_true, energies_contrast = merged.visualise(train_cogmaps, contrast_cogmaps)
+    logger.add_fig(fig)
+    p_value = get_p_value_for_two_samples(energies_true, energies_contrast)
+    logger.add_text("p_value = " + str(p_value))
+    logger.add_line_little()
+    logger.add_text("Срабатывание смерженной структуры на трейне:")
+    fig = merged.show_on_cogmaps(train_cogmaps, train_pics)
+    logger.add_fig(fig)
 
 
     logger.close()

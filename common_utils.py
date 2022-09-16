@@ -185,4 +185,5 @@ def visualise_sample(sample, range, n_bins):
 
     ax.hist(sample, edgecolor="black", bins=n_bins,
             weights=np.ones_like(sample) / len(sample), range=range)
+    ax.set(ylim=(0, 1))
     return fig
