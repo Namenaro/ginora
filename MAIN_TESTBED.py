@@ -42,7 +42,7 @@ def get_cogmaps_from_rules(lue_container, class_num, contrast_sample_len):
         cogmap = lue_container.apply_all_to_binary_map(binary_map, only_save_events2=True)
         contrast_cogmaps.append(cogmap)
 
-    return etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps
+    return etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps, contrast_pics
 
 
 def create_exemplar_and_struct_by_events_list(cogmap, events_list, ids_gen):
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     lue_rules = create_LUE_rules()
     logger.add_text("LUE-правила связывают пары событий:")
     logger.add_text(lue_rules.print())
-    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps = get_cogmaps_from_rules(lue_rules, class_num=147, contrast_sample_len=40)
+    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps, contrast_pics = get_cogmaps_from_rules(lue_rules, class_num=147, contrast_sample_len=40)
     logger.add_text("Эталонная когнитивная карта:")
     logger.add_text(etalon_cogmap.print())
     logger.add_fig(etalon_cogmap.draw(etalon_pic))
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     # 2. Хардкодим список событий для предиктора и предсказуемого:
     predictor_events = [2, 21, 24,14]
-    prediction_events = [0, 10, 5, 7]
+    prediction_events = [7]
     logger.add_text(" События предиктора: " + str(predictor_events))
     logger.add_text(" События предсказания: " + str(prediction_events))
 
@@ -153,8 +153,7 @@ if __name__ == '__main__':
     merged.show_on_cogmap(etalon_cogmap, etalon_pic, ax)
     logger.add_fig(fig)
 
-
-
+    # 8. Срабатывание смерженной структуры (визуализация) :
     fig, energies_true, energies_contrast = merged.visualise(train_cogmaps, contrast_cogmaps)
     logger.add_fig(fig)
     p_value = get_p_value_for_two_samples(energies_true, energies_contrast)
@@ -163,6 +162,12 @@ if __name__ == '__main__':
     logger.add_text("Срабатывание смерженной структуры на трейне:")
     fig = merged.show_on_cogmaps(train_cogmaps, train_pics)
     logger.add_fig(fig)
+
+    logger.add_text("Срабатывание смерженной структуры на констрасте:")
+    fig = merged.show_on_cogmaps(contrast_cogmaps, contrast_pics)
+    logger.add_fig(fig)
+
+
 
 
     logger.close()
