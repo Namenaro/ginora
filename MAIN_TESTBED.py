@@ -195,6 +195,9 @@ if __name__ == '__main__':
     logger = HtmlLogger("RESUME")
     for i in range(5):
         name = str(i)
+        logger.add_text("1 столбик: 2 выборки энергии экземпляров предсказания, собранных условно, но на 2 разных наборах картинок: целевые vs конктрастные")
+        logger.add_text("2 столбик: две выборки энергии экземпляров смерженной структуры, на 2 разных наборах картинок: целевые vs контрастные")
+        logger.add_text("3 столбик: отличие выборок энергии экземпляров предсказаня условных и безусловных (причем условная собрана по целевым, а бесусловная по всем, и целевым и контрастным)")
         p_value1, p_value2, p_value3, predictor_events, prediction_events = main(name, 47)
         logger.add_text(str(i) + ": [" + str(p_value3) + "], " + str(p_value2) + ", " + str(p_value1))
         logger.close()
