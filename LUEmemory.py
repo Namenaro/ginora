@@ -54,6 +54,7 @@ class LUEcontainer:
         self.dict_events1_to_rules2 = {} # {event1_id : [rule2_id]}
         self.id_gen_rules = IdGen()
         self.id_gen_events = IdGen()
+        self.events_type_2 = []
 
     def print(self):
         res = ""
@@ -79,6 +80,8 @@ class LUEcontainer:
             self.dict_events1_to_rules2[event1_id]=[]
         self.dict_events1_to_rules2[event1_id].append(rule2_id)
         print("RULE_2 ( "+ str(rule2_id)+")" + str(rule_2))
+        self.events_type_2.append(rule_2.end_event_id)
+        self.events_type_2.append(rule_2.start_event_id)
         return rule2_id
 
     def _get_rule_id_by_event_id(self, event_id):

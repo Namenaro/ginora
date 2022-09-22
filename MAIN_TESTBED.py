@@ -14,6 +14,8 @@ from main_constants import *
 #np.random.seed(467)
 #random.seed(47)
 
+
+
 def create_LUE_rules():
     lue_container = LUEcontainer()
     lue_container.add_rule_1(dx=1, dy=0, max_rad=1)  # 0 1 горизонтальная полосочка
@@ -22,8 +24,6 @@ def create_LUE_rules():
     lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=4)  # 6 7
     lue_container.add_rule_2(dx=1, dy=0, max_rad=3, event1_id=4)  # 8 9
     lue_container.add_rule_2(dx=0, dy=1, max_rad=3, event1_id=0)  # 10 11
-
-
     return lue_container
 
 def get_cogmaps_from_rules(lue_container, class_num, contrast_sample_len):
@@ -73,6 +73,8 @@ def two_hists(sample1, sample2, label1, label2):
     ax1.legend()
     return fig
 
+
+
 if __name__ == '__main__':
     logger = HtmlLogger("MAIN_TEST")
 
@@ -88,14 +90,15 @@ if __name__ == '__main__':
     logger.add_line_big()
 
     # 1.2. Каковы вероятности для данного LUE-события 1)массы и 2) нахождения в окрестности радиуса du?
-    LUE_event_ids = [2, 3, 6, 7]
+    LUE_event_ids = lue_rules.events_type_2
     bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps + train_cogmaps, 300)
     show_LUE_events_stat(LUE_event_ids, bank_physical_histograms, logger)
     logger.add_line_big()
 
     # 2. Хардкодим список событий для предиктора и предсказуемого:
-    predictor_events = [2, 21, 24,14]
-    prediction_events = [7]
+    events_random_sample = random.sample(range(etalon_cogmap.num_events_in_cogmap), 10)
+    predictor_events = events_random_sample[:5]
+    prediction_events = events_random_sample[6:]
     logger.add_text(" События предиктора: " + str(predictor_events))
     logger.add_text(" События предсказания: " + str(prediction_events))
 
@@ -166,9 +169,6 @@ if __name__ == '__main__':
     logger.add_text("Срабатывание смерженной структуры на констрасте:")
     fig = merged.show_on_cogmaps(contrast_cogmaps, contrast_pics)
     logger.add_fig(fig)
-
-
-
 
     logger.close()
 
