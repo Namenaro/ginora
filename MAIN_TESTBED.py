@@ -74,16 +74,15 @@ def two_hists(sample1, sample2, label1, label2):
     return fig
 
 
-
-if __name__ == '__main__':
-    logger = HtmlLogger("MAIN_TEST")
-
+def main(name, class_num):
+    logger = HtmlLogger("MAIN_TEST_"+name)
 
     # 1. Создание первичных (LUE) правил расстановки событий и разметка ими когнитивных карт:
     lue_rules = create_LUE_rules()
     logger.add_text("LUE-правила связывают пары событий:")
     logger.add_text(lue_rules.print())
-    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps, contrast_pics = get_cogmaps_from_rules(lue_rules, class_num=147, contrast_sample_len=40)
+    etalon_cogmap, etalon_pic, train_cogmaps, train_pics, contrast_cogmaps, contrast_pics = get_cogmaps_from_rules(
+        lue_rules, class_num=class_num, contrast_sample_len=40)
     logger.add_text("Эталонная когнитивная карта:")
     logger.add_text(etalon_cogmap.print())
     logger.add_fig(etalon_cogmap.draw(etalon_pic))
@@ -92,8 +91,8 @@ if __name__ == '__main__':
     # 1.2. Каковы вероятности для данного LUE-события 1)массы и 2) нахождения в окрестности радиуса du?
     LUE_event_ids = lue_rules.events_type_2
     bank_physical_histograms = BankOfPhysicalSamples(contrast_cogmaps + train_cogmaps, 300)
-    show_LUE_events_stat(LUE_event_ids, bank_physical_histograms, logger)
-    logger.add_line_big()
+    #show_LUE_events_stat(LUE_event_ids, bank_physical_histograms, logger)
+    #logger.add_line_big()
 
     # 2. Хардкодим список событий для предиктора и предсказуемого:
     events_random_sample = random.sample(range(etalon_cogmap.num_events_in_cogmap), 10)
@@ -104,8 +103,10 @@ if __name__ == '__main__':
 
     # 3.Создаем стуктуру/экземпляр для предиктора и предсказуемого:
     ids_gen = StructIdsGenerator()
-    exemplar_predictor, structure_predictor = create_exemplar_and_struct_by_events_list(etalon_cogmap, predictor_events, ids_gen)
-    exemplar_prediction, structure_prediction = create_exemplar_and_struct_by_events_list(etalon_cogmap, prediction_events, ids_gen)
+    exemplar_predictor, structure_predictor = create_exemplar_and_struct_by_events_list(etalon_cogmap, predictor_events,
+                                                                                        ids_gen)
+    exemplar_prediction, structure_prediction = create_exemplar_and_struct_by_events_list(etalon_cogmap,
+                                                                                          prediction_events, ids_gen)
     logger.add_text("Эталонный экземпляр предиктора:")
     logger.add_fig(exemplar_predictor.show(etalon_pic))
     logger.add_text("Эталонный экземпляр предсказания:")
@@ -119,10 +120,11 @@ if __name__ == '__main__':
     logger.add_line_big()
 
     # 5. Безусловная выборка предсказуемого
-
-    unconditional_prediction_sample = unconditional_sample(structure_prediction, contrast_cogmaps + train_cogmaps, bank_physical_histograms,
-                                         sample_size=200)
-    fig = visualise_sample(unconditional_prediction_sample, range=[ENERGY_OF_NON_FOUND, IDEAL_ENERGY_PREDICTION], n_bins=7)
+    unconditional_prediction_sample = unconditional_sample(structure_prediction, contrast_cogmaps + train_cogmaps,
+                                                           bank_physical_histograms,
+                                                           sample_size=200)
+    fig = visualise_sample(unconditional_prediction_sample, range=[ENERGY_OF_NON_FOUND, IDEAL_ENERGY_PREDICTION],
+                           n_bins=7)
     logger.add_text("Безусловная выборка предсказуемого на train + contrast:")
     logger.add_text(str(unconditional_prediction_sample))
     logger.add_fig(fig)
@@ -131,8 +133,8 @@ if __name__ == '__main__':
     # 6. Условная выборка предсказуемого
     cond_rec = ConditionalRecogniser(exemplar_predictor, exemplar_prediction)
     energy_sample_predictor, conditional_prediction_sample = conditional_sample(cond_rec, structure_predictor,
-                                                                           train_cogmaps,
-                                                                           bank_physical_histograms)
+                                                                                train_cogmaps,
+                                                                                bank_physical_histograms)
     logger.add_text("Условная выборка предсказуемого TRAIN:")
     logger.add_text(str(conditional_prediction_sample))
     fig = visualise_sample(conditional_prediction_sample, range=[ENERGY_OF_NON_FOUND, IDEAL_ENERGY_PREDICTION],
@@ -140,27 +142,26 @@ if __name__ == '__main__':
     logger.add_fig(fig)
     logger.add_line_little()
 
-    # 6. Сравнение условной и безусловной выборок предсказуемого:
-    p_value = get_p_value_for_two_samples(unconditional_prediction_sample, conditional_prediction_sample)
+    # 7. Сравнение условной и безусловной выборок предсказуемого:
+    p_value1 = get_p_value_for_two_samples(unconditional_prediction_sample, conditional_prediction_sample)
     logger.add_text("Сравнение условной и безусловной выборок предсказуемого:")
-    logger.add_text("p_value = "+ str(p_value))
+    logger.add_text("p_value = " + str(p_value1))
     fig = two_hists(unconditional_prediction_sample, conditional_prediction_sample, "unconditional", "conditional")
     logger.add_fig(fig)
     logger.add_line_little()
 
-    # 7. Итоговый классификатор:
+    # 8. Итоговый классификатор:
     merged = Merged(exemplar_predictor, exemplar_prediction, bank_physical_histograms)
-
     logger.add_text("Итоговый классификатор:")
     fig, ax = plt.subplots()
     merged.show_on_cogmap(etalon_cogmap, etalon_pic, ax)
     logger.add_fig(fig)
 
-    # 8. Срабатывание смерженной структуры (визуализация) :
+    # 9. Срабатывание смерженной структуры (визуализация) :
     fig, energies_true, energies_contrast = merged.visualise(train_cogmaps, contrast_cogmaps)
     logger.add_fig(fig)
-    p_value = get_p_value_for_two_samples(energies_true, energies_contrast)
-    logger.add_text("p_value = " + str(p_value))
+    p_value2 = get_p_value_for_two_samples(energies_true, energies_contrast)
+    logger.add_text("p_value = " + str(p_value2))
     logger.add_line_little()
     logger.add_text("Срабатывание смерженной структуры на трейне:")
     fig = merged.show_on_cogmaps(train_cogmaps, train_pics)
@@ -170,6 +171,33 @@ if __name__ == '__main__':
     fig = merged.show_on_cogmaps(contrast_cogmaps, contrast_pics)
     logger.add_fig(fig)
 
+    # 10. сравнение условной энергии предсказания на трейне и на контрасте
+    cond_rec = ConditionalRecogniser(exemplar_predictor, exemplar_prediction)
+    Tpredictor_energies, Tprediction_energies = conditional_sample(cond_rec, structure_predictor,
+                                                                                train_cogmaps,
+                                                                                bank_physical_histograms)
+    Cpredictor_energies, Cprediction_energies = conditional_sample(cond_rec, structure_predictor,
+                                                                   contrast_cogmaps,
+                                                                   bank_physical_histograms)
+    p_value3 =  get_p_value_for_two_samples(Cprediction_energies,Tprediction_energies)
+
+    logger.add_text("Сравнение условной выборки предсказуемого на трейне и контрасте:")
+    logger.add_text("p_value = " + str(p_value1))
+    fig = two_hists(Cprediction_energies,Tprediction_energies, "на контрастных", "на целевых")
+    logger.add_fig(fig)
+    logger.add_text("p_value3 = " + str(p_value3))
+    logger.add_line_little()
+
     logger.close()
+    return p_value1, p_value2,p_value3, predictor_events, prediction_events
+
+if __name__ == '__main__':
+    logger = HtmlLogger("RESUME")
+    for i in range(5):
+        name = str(i)
+        p_value1, p_value2, p_value3, predictor_events, prediction_events = main(name, 47)
+        logger.add_text(str(i) + ": [" + str(p_value3) + "], " + str(p_value2) + ", " + str(p_value1))
+        logger.close()
+
 
 
