@@ -17,10 +17,11 @@ random.seed(47)
 def create_LUE_rules():
     lue_container = LUEcontainer()
     lue_container.add_rule_1(dx=1, dy=0, max_rad=1)  # 0 1 горизонтальная полосочка
-    lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 2 3
+    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 2 3 вертикальная полосочка
 
-    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 4 5 вертикальная полосочка
+    lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 4 5
     lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=4)  # 6 7
+    lue_container.add_rule_2(dx=1, dy=0, max_rad=3, event1_id=6)  # 8 9
     return lue_container
 
 def get_cogmaps_from_rules(lue_container, class_num, contrast_sample_len):
