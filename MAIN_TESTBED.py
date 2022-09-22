@@ -11,16 +11,18 @@ from stata import get_p_value_for_two_samples
 from classifier import Merged
 from main_constants import *
 
-np.random.seed(467)
-random.seed(47)
+#np.random.seed(467)
+#random.seed(47)
 
 def create_LUE_rules():
     lue_container = LUEcontainer()
     lue_container.add_rule_1(dx=1, dy=0, max_rad=1)  # 0 1 горизонтальная полосочка
-    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 2 3 вертикальная полосочка
+    lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 2 3
+    lue_container.add_rule_1(dx=0, dy=1, max_rad=1)  # 4 5 вертикальная полосочка
+    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=4)  # 6 7
+    lue_container.add_rule_2(dx=1, dy=0, max_rad=3, event1_id=4)  # 8 9
+    lue_container.add_rule_2(dx=0, dy=1, max_rad=3, event1_id=0)  # 10 11
 
-    lue_container.add_rule_2(dx=0, dy=1, max_rad=7, event1_id=0)  # 4 5
-    lue_container.add_rule_2(dx=1, dy=0, max_rad=7, event1_id=2)  # 6 7
 
     return lue_container
 
@@ -92,8 +94,8 @@ if __name__ == '__main__':
     logger.add_line_big()
 
     # 2. Хардкодим список событий для предиктора и предсказуемого:
-    predictor_events = [1, 2]
-    prediction_events = [3]
+    predictor_events = [2, 21, 24,14]
+    prediction_events = [0, 10, 5, 7]
     logger.add_text(" События предиктора: " + str(predictor_events))
     logger.add_text(" События предсказания: " + str(prediction_events))
 
