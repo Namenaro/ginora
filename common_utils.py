@@ -46,7 +46,9 @@ def get_train_test_contrast(class_num, contrast_sample_len):
         if class_num == ominset[i][1]:
             res.append(ominset[i][0])
     contrast = []
-    for i in range(contrast_sample_len):
+    indexes = random.sample(range(0, len(ominset)), contrast_sample_len)
+
+    for i in indexes:
         if class_num != ominset[i][1]:
             contrast.append(ominset[i][0])
     return res[:10], res[11:], contrast

@@ -74,7 +74,7 @@ def two_hists(sample1, sample2, label1, label2):
     return fig
 
 
-def main(name, class_num):
+def main(name, class_num, num_events_in_predictor, num_events_in_prediction):
     logger = HtmlLogger("MAIN_TEST_"+name)
 
     # 1. Создание первичных (LUE) правил расстановки событий и разметка ими когнитивных карт:
@@ -95,9 +95,10 @@ def main(name, class_num):
     #logger.add_line_big()
 
     # 2. Хардкодим список событий для предиктора и предсказуемого:
-    events_random_sample = random.sample(range(etalon_cogmap.num_events_in_cogmap), 10)
-    predictor_events = events_random_sample[:5]
-    prediction_events = events_random_sample[6:]
+    events_random_sample_size = num_events_in_predictor + num_events_in_prediction
+    events_random_sample = random.sample(range(etalon_cogmap.num_events_in_cogmap), events_random_sample_size)
+    predictor_events = events_random_sample[:num_events_in_predictor]
+    prediction_events = events_random_sample[num_events_in_predictor:]
     logger.add_text(" События предиктора: " + str(predictor_events))
     logger.add_text(" События предсказания: " + str(prediction_events))
 
@@ -192,6 +193,8 @@ def main(name, class_num):
     return p_value1, p_value2,p_value3, predictor_events, prediction_events
 
 if __name__ == '__main__':
+    num_events_in_predictor = 10
+    num_events_in_prediction = 5
     logger = HtmlLogger("RESUME")
     logger.add_text(
         "1 столбик: 2 выборки энергии экземпляров предсказания, собранных условно, но на 2 разных наборах картинок: целевые vs конктрастные")
@@ -201,9 +204,17 @@ if __name__ == '__main__':
         "3 столбик: отличие выборок энергии экземпляров предсказаня условных и безусловных (причем условная собрана по целевым, а бесусловная по всем, и целевым и контрастным)")
     logger.add_text(
         "для целей классификации будем использовать либо p-val первого столбика, либо второго - смотря что будет \"лучше\" себя ввести")
-    for i in range(5):
+    logger.add_line_little()
+    logger.add_text("НЕПЛОХАЯ СТРОКА, ЭТО ГДЕ ПЕРВЫЙ ИЛИ ВТОРОЙ СТОЛБИК СОВСЕМ МАЛЕНЬКИЙ")
+    logger.add_text("ОТЛЧИНАЯ СТРОКА, ЭТО ГДЕ ПЕРВЫЙ И ВТОРОЙ СТОЛБИК СОВСЕМ МАЛЕНЬКИЕ")
+    logger.add_line_little()
+    logger.add_text("кол-во событий в предикторе = " + str(num_events_in_predictor))
+    logger.add_text("кол-во событий в предсказании = " + str(num_events_in_prediction))
+    for i in range(12):
         name = str(i)
-        p_value1, p_value2, p_value3, predictor_events, prediction_events = main(name, class_num=47)
+        p_value1, p_value2, p_value3, predictor_events_, prediction_events_ = main(name, class_num=37,
+                                                                                 num_events_in_predictor=num_events_in_predictor,
+                                                                                 num_events_in_prediction=num_events_in_prediction)
         logger.add_text(str(i) + ": [" + str(p_value3) + "], " + str(p_value2) + ", " + str(p_value1))
         logger.close()
 
