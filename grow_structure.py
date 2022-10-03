@@ -35,17 +35,7 @@ class GrowStructure:
         #удаляем событие из когмап как рассмотренное
         self.cogmap.delete_event(cogmap_event_id)
 
-    def add_next_event(self, cogmap_event_id):
-        real_coord, event_LUE, mass = self.cogmap.get_event_data(cogmap_event_id)
-        # добавляем событие в структуру, для этого ищем в экземпляре ближайшее событие к данному
-        prev_event_id, prev_event_point  = self.current_exemplar.find_event_nearest_to_point(real_coord)
-        incoming_u = Point(real_coord.x-prev_event_point.x, real_coord.y-prev_event_point.y)
-        incoming_u_id, event_id = self.current_structure.add_next_event(event_LUE, mass, incoming_u, prev_event_id)
-        # добавляем событие в экземпляр
-        self.current_exemplar.set_event_data(event_id, real_coord, mass, incoming_u_error=Point(0,0))
-        # удаляем событие из когмап как рассмотренное
-        self.cogmap.delete_event(cogmap_event_id)
-
+     
 def create_random_structure(etalon_cogmap, struct_size, ids_generator=None):
     struct_creator = GrowStructure(etalon_cogmap, ids_generator)
     cogmap_fisrt_event_id = struct_creator.get_actual_cogmap().get_random_event()

@@ -16,6 +16,12 @@ class Cogmap:
         self.local_id_gen = IdGen()
         self.num_events_in_cogmap =0
 
+    def get_all_local_event_ids(self):
+        all_local_event_ids = []
+        for point, events_in_point in self.points_to_events.items():
+            all_local_event_ids = all_local_event_ids + list(events_in_point.keys())
+        return all_local_event_ids
+
     def register_event(self, point, event_data):
         self.event_ids_set.add(event_data.event_id)
         if point not in self.points_to_events:

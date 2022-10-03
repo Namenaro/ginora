@@ -2,6 +2,7 @@ from structure_description import *
 import matplotlib.patches as mpatches
 from bank_of_physical_samples import BankOfPhysicalSamples, MAX_RAD
 from common_utils import Point, my_dist
+from energy_formula import get_energy
 
 import matplotlib.pyplot as plt
 
@@ -46,10 +47,8 @@ class StructureExemplar:
 
     def get_exemplar_energy(self, bank_physical_histograms):
         params_probabilities = self._get_probabilities_for_all_relaxable_params(bank_physical_histograms)
-        energy = 0
-        for _, propbability in params_probabilities.items():
-            energy+=(1-propbability)
-
+        probabilities_list = get_energy(list(params_probabilities.values()))
+        energy = get_energy(probabilities_list)
         return energy
 
     def find_event_nearest_to_point(self, point):
